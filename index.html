@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallpaper Gallery</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        img {
+            max-width: 90%;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Wallpaper Gallery</h1>
+    <div id="gallery"></div>
+
+    <script>
+        
+    
+    // Array of wallpaper filenames
+    import { wallpapers } from './imageList.js';
+
+    const gallery = document.getElementById('gallery');
+
+    // Function to load image
+    const loadImage = (image) => {
+        const src = image.getAttribute('data-src');
+        if (src) {
+            image.src = src;
+            image.removeAttribute('data-src'); // Remove attribute after loading
+        }
+    };
+
+    // IntersectionObserver callback
+    const imgObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                loadImage(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        rootMargin: '0px',
+        threshold: 0.1
+    });
+
+    // Dynamically create and append img elements for each wallpaper
+    wallpapers.forEach(wallpaper => {
+        const img = document.createElement('img');
+        img.setAttribute('data-src', `mine/${wallpaper}`);
+        img.alt = wallpaper;
+        gallery.appendChild(img);
+        imgObserver.observe(img); // Observe each image
+    });
+</script>
+</body>
+</html>
